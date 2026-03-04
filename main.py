@@ -7,6 +7,8 @@ file_path = "the-verdict.txt"
 urllib.request.urlretrieve(url, file_path)
 #This splits text
 import re
+
+#This tokenizer handles word input and processing
 class SimpleTokenizerV1:
     def __init__(self, vocab):
         self.str_to_int = vocab
@@ -24,6 +26,30 @@ class SimpleTokenizerV1:
         text = re.sub(r'\s+([,.?_!"()\'])', r'\1', text)
         return text
 
+#This class handles unknown words not previously introduced
+#from training sources
+class SimpleTokenizerV2:
+    def __init__(self, vocab):
+        self.str_to_int = vocab
+        self.int_to_str = { i:s for s, i in vocab.items()}
+
+    def encode(self, text):
+        preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)',
+                                 text)
+        preprocessed = [
+            item.strip() for item in preprocessed if item.strip()
+        ]
+        preprocessed = [item if item in self.str_to_int
+                    else "<|unk|>" for item in preprocessed]
+        ids = [self.str_to_int[s] for s in preprocessed]
+        return ids
+
+    def decode(self, ids):
+        text = " ".join([self.int_to_str[i] for i in ids])
+        text = re.sub(r'\s+([,.:;?!"()\'])', 
+                      r'\1', text)
+        return text
+        
 def main():
     """
     print("Titania Initialization")
@@ -114,6 +140,22 @@ if __name__ == "__main__":
 """
 #Simple context tokens need to be implemented in order to 
 #handle unknown words
+#An <unk> token is not a part of the usual vocabulary
+#An <endoftext> token separates unrelated text sources
+"""
+all_tokens = sorted(list(set(preprocessed)))
+all_tokens.extend(["<|endoftext|>", "<|unk|>"])
+vocab = {token:integer for integer, token in enumerate
+             (all_tokens)}
+print(len(vocab.items()))
+"""
+#Please leave commented unless able to fix "unexpected indent"
+
+#Use this text to test the SimpleTokenizerV2 class
+text1 = "Hello, do you like tea?"
+text2 = "in the sunlit terraces of the palace."
+text = " <|endoftext|> ".join((text1, text2))
+print(text)
 
 if __name__ == "__main__":
     main()
