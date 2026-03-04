@@ -1,10 +1,6 @@
 #This imports a short story for training purposes
 import urllib.request
-url = ("https://raw.githubusercontent.com/rasbt/"
-"LLMs-from-scratch/main/ch02/01_main-chapter-code/"
-"the-verdict.txt")
-file_path = "the-verdict.txt"
-urllib.request.urlretrieve(url, file_path)
+
 #This splits text
 import re
 
@@ -51,11 +47,6 @@ class SimpleTokenizerV2:
         return text
         
 def main():
-    """
-    print("Titania Initialization")
-    print("Why isn't git working?")
-if __name__ == "__main__":
-    """
 #An embedding is essentially a mapping of discrete objects to
 #points in a continuous vector space, basically they convert 
 #nonnumeric data into a format that neural networks can
@@ -63,7 +54,11 @@ if __name__ == "__main__":
 #given a value that corresponds to a specific number.
 
 #Here we download text from the verdict
-
+    url = ("https://raw.githubusercontent.com/rasbt/"
+        "LLMs-from-scratch/main/ch02/01_main-chapter-code/"
+        "the-verdict.txt")
+    file_path = "the-verdict.txt"
+    urllib.request.urlretrieve(url, file_path)
     with open("the-verdict.txt", "r", encoding="utf-8") as f:
         raw_text = f.read()
     print("Total number of character:", len(raw_text))
@@ -134,28 +129,38 @@ if __name__ == "__main__":
 #If you want, uncomment and run this code. Since Hello is not used 
 # in the verdict story, you should see a KeyError: 'Hello' appear, 
 # since this word cannot be tokenized
-"""
+    """
     text = "Hello, do you like tea?"
     print(tokenizer.encode(text))
-"""
+    """
 #Simple context tokens need to be implemented in order to 
 #handle unknown words
 #An <unk> token is not a part of the usual vocabulary
 #An <endoftext> token separates unrelated text sources
-"""
-all_tokens = sorted(list(set(preprocessed)))
-all_tokens.extend(["<|endoftext|>", "<|unk|>"])
-vocab = {token:integer for integer, token in enumerate
+    
+    all_tokens = sorted(list(set(preprocessed)))
+    all_tokens.extend(["<|endoftext|>", "<|unk|>"])
+    vocab = {token:integer for integer, token in enumerate
              (all_tokens)}
-print(len(vocab.items()))
-"""
-#Please leave commented unless able to fix "unexpected indent"
+    print(len(vocab.items()))
+#It should say 1132, to show the new words introduced
 
 #Use this text to test the SimpleTokenizerV2 class
-text1 = "Hello, do you like tea?"
-text2 = "in the sunlit terraces of the palace."
-text = " <|endoftext|> ".join((text1, text2))
-print(text)
+    text1 = "Hello, do you like tea?"
+    text2 = "in the sunlit terraces of the palace."
+    text = " <|endoftext|> ".join((text1, text2))
+    print(text)
+#It should say "Hello, do  you like tea? <|endoftext|>
+#in the sunlit terraces of the palace."
+
+#Use this to encode the above text
+    tokenizer  = SimpleTokenizerV2(vocab)
+    print(tokenizer.encode(text))
+#This will print out a new set of numbers
+
+#This decodes it back
+    print(tokenizer.decode(tokenizer.encode(text)))
+    
 
 if __name__ == "__main__":
     main()
