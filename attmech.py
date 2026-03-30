@@ -37,4 +37,12 @@ def main():
     print("Sum:", attn_weights_2_tmp.sum())
 #The attention scores printed out earlier should now sum to 1
 
+#The softmax function can perform the same role, but is more
+#efficient. 
+    def softmax_naive(x):
+        return torch.exp(x) / torch.exp(x).sum(dim=0)
+    attn_weights_2_naive = softmax_naive(attn_scores_2)
+    print("Attention weights:", attn_weights_2_naive)
+    print("Sum(softmax):", attn_weights_2_naive.sum())
+
 main()
