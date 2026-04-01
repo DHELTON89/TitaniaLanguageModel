@@ -45,4 +45,46 @@ def main():
     print("Attention weights:", attn_weights_2_naive)
     print("Sum(softmax):", attn_weights_2_naive.sum())
 
+    attn_weights_2 = torch.softmax(attn_scores_2, dim=0)
+    print("Attention weights:", attn_weights_2)
+    print("Sum:", attn_weights_2.sum())
+
+    print("Context Vector Total")
+#Now we can calculate the context vector
+    query = inputs[1]
+    context_vec_2 = torch.zeros(query.shape)
+    for i,x_i in enumerate(inputs):
+        context_vec_2 += attn_weights_2[i]*x_i
+    print(context_vec_2)
+#This is the weighted sum of all context vectors
+#It should appear as just one line below context vector total
+
+#Now we compute all attention weights and not just the second one
+    attn_scores = torch.empty(6, 6)
+    for i, x_i in enumerate(inputs):
+        for j, x_j in enumerate(inputs):
+            attn_scores[i, j] = torch.dot(x_i, x_j)
+    print(attn_scores)
+#This will print out ([0.9995, 0.9544, 0.9422,...,0.9450])
+
+#After this is done, we add trainable weights, which will allow the language
+#model to learn from data and improve performance on specific tasks.
+#Three weight matrices must be initialized
+    x_2 = inputs[1]
+    d_in = inputs.shape[1]
+    d_out = 2
+    torch.manual_seed(123)
+    W_query = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad = False)
+    W_key = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad = False)
+    W_value = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad = False)
+#requires_grad is set to False to reduce noise from the outputs, but in actual
+#model training it would be set to True so the matrices can update in real time.
+#now compute the query, key and value vectors; two numbers should print out (0.4306
+# and 1.4551)
+    query_2 = x_2 @ W_query
+    key_2 = x_2 @ W_query
+    value_2 = x_2 @ W_value
+    print("Now we are adding trainable weights")
+    print(query_2)
+
 main()
