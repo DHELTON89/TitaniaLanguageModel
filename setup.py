@@ -318,7 +318,8 @@ def main():
 
     input_embeddings = token_embeddings + pos_embeddings
     print(input_embeddings.shape)
-    
+
+   
 
 if __name__ == "__main__":
     main()

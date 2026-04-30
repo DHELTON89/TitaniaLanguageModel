@@ -86,5 +86,30 @@ def main():
     value_2 = x_2 @ W_value
     print("Now we are adding trainable weights")
     print(query_2)
+#A two-dimensional vector will print out, since the number of columns of the 
+#corresponding weight matrix is set by d_out = 2
 
+#You can obtain all keys and values via matrix multiplication
+    keys = inputs @ W_key
+    values = inputs @ W_value
+    print("keys.shape:", keys.shape)
+    print("values.shape:", values.shape)
+#Now compute the attention score
+    keys_2 = keys[1]
+    attn_score_22 = query_2.dot(keys_2)
+    print(attn_score_22)
+
+    attn_scores_2 = query_2 @ keys.T
+    print(attn_scores_2)
+#Now we go from attention scores to attention weights. Compute the attention
+#weights by scaling the attention scores and using the softmax function. 
+#However, now we scale the attention scores by dividing them by the square
+#root is mathematically the same as exponentiating by 0.5
+    d_k = keys.shape[-1]
+    attn_weights_2 = torch.softmax(attn_scores_2/d_k**0.5, dim =  -1)
+    print(attn_weights_2)
+#Now the final step is to compute the context vectors
+    context_vec_2 = attn_weights_2 @ values
+    print(context_vec_2)
+    
 main()
